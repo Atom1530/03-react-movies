@@ -1,45 +1,57 @@
-import CafeInfo from "../CafeInfo/CafeInfo";
-import css from "./App.module.css";
-import VoteOptions from "../VoteOptions/VoteOptions";
+import { fetchMovies } from "../../services/movieService";
+import ErrorMessage from "./ErrorMessage/ErrorMessage";
+import MovieModal from "./MovieModal/MovieModal";
+import type { Movie } from "../../types/movie";
+import SearchBar from "./SearchBar/SearchBar";
+import MovieGrid from "./MovieGrid/MovieGrid";
+import { Toaster, toast } from "react-hot-toast";
+import Loader from "./Loader/Loader";
 import { useState } from "react";
-import type { Votes, VoteType } from "../../types/votes";
-import VoteStats from "../VoteStats/VoteStats";
-import Notification from "../Notification/Notification";
-
-const DefaultNumbers: Votes = { good: 0, neutral: 0, bad: 0 };
 
 export default function App() {
-  const [votes, setVotes] = useState<Votes>(DefaultNumbers);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [selected, setSelected] = useState<Movie | null>(null);
 
-  const handleVote = (type: VoteType) => {
-    setVotes((prev) => ({ ...prev, [type]: prev[type] + 1 }));
-  };
+  const handleSelectMovie = (movie: Movie) => setSelected(movie);
+  const handleCloseModal = () => setSelected(null);
 
-  const resetVotes = (): void => {
-    setVotes(DefaultNumbers);
+  const handleSearch = async (query: string): Promise<void> => {
+    setIsError(false);
+    setMovies([]);
+    setSelected(null);
+    setIsLoading(true);
+
+    try {
+      const results = await fetchMovies(query);
+
+      if (results.length === 0) {
+        console.log("No movies found for your request.");
+        toast.error("No movies found for your request.");
+        return;
+      }
+      setMovies(results);
+    } catch {
+      setIsError(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
-  const totalVotes = votes.good + votes.neutral + votes.bad;
-  const positiveRate = totalVotes
-    ? Math.round((votes.good / totalVotes) * 100)
-    : 0;
 
   return (
-    <div className={css.app}>
-      <CafeInfo />
-      <VoteOptions
-        onVote={handleVote}
-        onReset={resetVotes}
-        canReset={totalVotes > 0}
-      />
-      {totalVotes > 0 ? (
-        <VoteStats
-          votes={votes}
-          totalVotes={totalVotes}
-          positiveRate={positiveRate}
-        />
-      ) : (
-        <Notification />
+    <>
+      <Toaster position="top-center" />
+      <SearchBar onSubmit={handleSearch} />
+      {isLoading && <Loader />}
+
+      {!isLoading && isError && <ErrorMessage />}
+
+      {!isLoading && !isError && movies.length > 0 && (
+        <MovieGrid movies={movies} onSelect={handleSelectMovie} />
       )}
-    </div>
+
+      {selected && <MovieModal movie={selected} onClose={handleCloseModal} />}
+    </>
   );
 }
