@@ -1,9 +1,10 @@
-import axios from "axios";
+// src/services/movieService.ts
+import axios, { type AxiosInstance } from "axios";
 import type { Movie } from "../types/movie";
 
 const TMDB_TOKEN = import.meta.env.VITE_TMDB_TOKEN as string;
 
-const api = axios.create({
+const api: AxiosInstance = axios.create({
   baseURL: "https://api.themoviedb.org/3",
   headers: { Authorization: `Bearer ${TMDB_TOKEN}` },
 });
@@ -24,7 +25,5 @@ export async function fetchMovies(query: string): Promise<Movie[]> {
       page: 1,
     },
   });
-  console.log(data.results);
-  
   return data.results;
 }
