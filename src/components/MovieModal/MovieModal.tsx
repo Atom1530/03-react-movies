@@ -1,6 +1,6 @@
 import css from "./MovieModal.module.css";
 import { createPortal } from "react-dom";
-import type { Movie } from "../../../types/movie";
+import type { Movie } from "./../../types/movie";
 import { useEffect } from "react";
 
 const BACKDROP_BASE = "https://image.tmdb.org/t/p/original";

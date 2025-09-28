@@ -1,11 +1,11 @@
 import { fetchMovies } from "../../services/movieService";
-import ErrorMessage from "./ErrorMessage/ErrorMessage";
-import MovieModal from "./MovieModal/MovieModal";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import MovieModal from "../MovieModal/MovieModal";
 import type { Movie } from "../../types/movie";
-import SearchBar from "./SearchBar/SearchBar";
-import MovieGrid from "./MovieGrid/MovieGrid";
+import SearchBar from "../SearchBar/SearchBar";
+import MovieGrid from "../MovieGrid/MovieGrid";
 import { Toaster, toast } from "react-hot-toast";
-import Loader from "./Loader/Loader";
+import Loader from "../Loader/Loader";
 import { useState } from "react";
 
 export default function App() {

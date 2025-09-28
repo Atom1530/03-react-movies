@@ -1,5 +1,5 @@
 import css from "./MovieGrid.module.css";
-import type { Movie } from "../../../types/movie";
+import type { Movie } from "../../types/movie";
 
 const IMG_BASE = "https://image.tmdb.org/t/p/w500";
 const FALLBACK_IMG = "https://placehold.co/500x750?text=No+Image";
